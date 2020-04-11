@@ -9,7 +9,7 @@ jobs:
       - image: hashicorp/terraform:light
     steps:
       # see what's inside
-      -run:
+      - run:
           name: Check contents
           command: |
             ls -al
