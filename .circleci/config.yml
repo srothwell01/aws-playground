@@ -19,7 +19,7 @@ jobs:
       - run:
           name: Test terraform
           command: |
+            terraform init
             terraform -v
             terraform validate
-            terraform init
             terraform plan
