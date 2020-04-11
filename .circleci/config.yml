@@ -8,6 +8,7 @@ jobs:
     docker:
       - image: hashicorp/terraform:light
     steps:
+      - checkout
       # see what's inside
       - run:
           name: Check contents
