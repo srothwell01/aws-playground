@@ -21,4 +21,5 @@ jobs:
           command: |
             terraform -v
             terraform validate
+            terraform init
             terraform plan
