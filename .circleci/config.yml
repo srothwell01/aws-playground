@@ -123,13 +123,8 @@ workflows:
       - apply:
           requires:
             - plan
-      - deployment:
-          requires:
-            - apply
       - hold:
           type: approval
-          requires:
-            - deployment
       - destroy:
           requires:
             - hold
