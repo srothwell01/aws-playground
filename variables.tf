@@ -1,5 +1,14 @@
+variable "access_key_id" {
+  description = "AWS access key"
+}
+
+variable "secret_access_key" {
+  description = "AWS secret key"
+}
+
 variable "region" {
-  type = string
+  description = "AWS region"
+  type        = string
 }
 
 variable "playground_vpc" {

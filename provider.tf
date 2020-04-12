@@ -1,5 +1,5 @@
 provider "aws" {
-  profile                 = "terraform-playground"
-  shared_credentials_file = "~/.aws/credentials"
-  region                  = var.region
+  access_key = var.access_key_id
+  secret_key = var.secret_access_key
+  region     = var.region
 }
