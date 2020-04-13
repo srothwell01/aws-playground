@@ -64,12 +64,12 @@ jobs:
             source $BASH_ENV
             cd ~/project/
             terraform plan -no-color -out=tf_plan
-        - store_artifacts:
-            path: ~/project/tf_plan
-            destination: tf_plan
-        - persist_to_workspace:
-            root: ~/project
-            paths: .
+      - store_artifacts:
+          path: ~/project/tf_plan
+          destination: tf_plan
+      - persist_to_workspace:
+          root: ~/project
+          paths: .
 
   apply:
     <<: *default_config
