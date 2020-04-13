@@ -84,7 +84,7 @@ jobs:
           command: |
             source $BASH_ENV
             cd ~/project/
-            terraform apply -input=false --auto-approve tfplan
+            terraform apply -input=false --auto-approve tf_plan
       - run:
           name: terraform show
           command: terraform show --no-color > tf_apply_result
