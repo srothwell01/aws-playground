@@ -87,7 +87,7 @@ jobs:
             terraform apply -input=false --auto-approve tf_plan
       - run:
           name: terraform show
-          command: terraform show --no-color > tf_apply_result
+          command: terraform show -no-color > tf_apply_result
       - store_artifacts:
           path: ~/project/tf_apply_result
           destination: tf_apply_result
@@ -106,7 +106,7 @@ jobs:
             terraform destroy --auto-approve
       - run:
           name: terraform show
-          command: terraform show --no-color > tf_destroy_result
+          command: terraform show -no-color > tf_destroy_result
       - store_artifacts:
           path: ~/project/tf_destroy_result
           destination: tf_destroy_result
