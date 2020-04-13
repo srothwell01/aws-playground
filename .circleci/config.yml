@@ -50,7 +50,7 @@ jobs:
             terraform fmt
       - persist_to_workspace:
           root: ~/project
-          path: .
+          paths: .
 
   plan:
     <<: *default_config
