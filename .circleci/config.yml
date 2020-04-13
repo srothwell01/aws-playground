@@ -14,22 +14,7 @@ default_config: &default_config
     BASH_ENV: /root/.bashrc
     TERRAFORM_ENV: ~/project/
 
-repo_cache_key: &repo_cache_key
-  v1-repo-{{ .Branch }}-{{ .Revision }}
-
 ########################## Pre-configure steps ##########################
-
-restore_repo: &restore_repo
-  restore_cache:
-    name: Restore Cache
-    key: *repo_cache_key
-
-save_repo: &save_repo
-  save_cache:
-    name: Save Cache
-    key: *repo_cache_key
-    paths:
-      - *working_directory
 
 set_terraform_environment: &set_terraform_environment
   run:
@@ -46,8 +31,6 @@ terraform_init: &terraform_init
       source $BASH_ENV
       cd ~/project/
       terraform init -backend-config="token=${TF_API_TOKEN}"
-      ls -lahrt
-
 
 ########################## Job Definitions ##########################
 
@@ -65,49 +48,66 @@ jobs:
             source $BASH_ENV
             cd ~/project/
             terraform fmt
-      - *save_repo
+      - persist_to_workspace:
+          root: ~/project
+          path: .
 
   plan:
     <<: *default_config
     steps:
-      - *restore_repo
+      - attach_workspace:
+          at: ~/project
       - *set_terraform_environment
-      #- *terraform_init
       - run:
           name: terraform plan
           command: |
             source $BASH_ENV
             cd ~/project/
-            terraform plan
+            terraform plan -no-color -out=tf_plan
+        - store_artifacts:
+            path: ~/project/tf_plan
+            destination: tf_plan
+        - persist_to_workspace:
+            root: ~/project
+            paths: .
 
   apply:
     <<: *default_config
     steps:
-      - *restore_repo
-      - *set_terraform_environment
-    #  - *terraform_init
       - attach_workspace:
-          at: *working_directory
+          at: ~/project
+      - *set_terraform_environment
       - run:
           name: terraform apply
           command: |
             source $BASH_ENV
             cd ~/project/
-            terraform init -backend-config="token=${TF_API_TOKEN}"
-            terraform apply --auto-approve
+            terraform apply -input=false --auto-approve tfplan
+      - run:
+          name: terraform show
+          command: terraform show --no-color > tf_apply_result
+      - store_artifacts:
+          path: ~/project/tf_apply_result
+          destination: tf_apply_result
 
   destroy:
     <<: *default_config
     steps:
-      - *restore_repo
+      - attach_workspace:
+          at: ~/project
       - *set_terraform_environment
-     # - *terraform_init
       - run:
           name: "Destruction of env"
           command: |
             source $BASH_ENV
             cd ~/project/
             terraform destroy --auto-approve
+      - run:
+          name: terraform show
+          command: terraform show --no-color > tf_destroy_result
+      - store_artifacts:
+          path: ~/project/tf_destroy_result
+          destination: tf_destroy_result
 
 ########################## Workflow ##########################
 workflows:
