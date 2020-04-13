@@ -64,7 +64,6 @@ jobs:
           command: |
             source $BASH_ENV
             cd ~/project/
-         #   terraform init -backend-config="token=${TF_API_TOKEN}"
             terraform fmt
       - *save_repo
 
