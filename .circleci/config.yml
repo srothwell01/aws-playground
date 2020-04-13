@@ -1,0 +1,136 @@
+version: 2.1
+
+########################## Setup References ##########################
+references:
+
+working_directory: &working_directory
+  ~/project
+
+default_config: &default_config
+  docker:
+    - image: hashicorp/terraform:light
+  working_directory: *working_directory
+  environment:
+    BASH_ENV: /root/.bashrc
+    TERRAFORM_ENV: ~/project/
+    TF_INPUT: 0
+    TF_IN_AUTOMATION: 1
+
+########################## Pre-configure steps ##########################
+
+set_terraform_environment: &set_terraform_environment
+  run:
+    name: set terraform environment
+    command: |
+      cd && touch $BASH_ENV
+      cd ~/project/
+
+# terraform init step
+terraform_init: &terraform_init
+  run:
+    name: terraform init
+    command: |
+      source $BASH_ENV
+      cd ~/project/
+      terraform init -backend-config="token=${TF_API_TOKEN}"
+
+########################## Job Definitions ##########################
+
+jobs:
+
+  build:
+    <<: *default_config
+    steps:
+      - checkout
+      - *set_terraform_environment
+      - *terraform_init
+      - run:
+          name: terraform fmt
+          command: |
+            source $BASH_ENV
+            cd ~/project/
+            terraform fmt
+      - persist_to_workspace:
+          root: ~/project
+          paths: .
+
+  plan:
+    <<: *default_config
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - *set_terraform_environment
+      - run:
+          name: terraform plan
+          command: |
+            source $BASH_ENV
+            cd ~/project/
+            terraform plan -no-color -out=tf_plan
+      - store_artifacts:
+          path: ~/project/tf_plan
+          destination: tf_plan
+      - persist_to_workspace:
+          root: ~/project
+          paths: .
+
+  apply:
+    <<: *default_config
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - *set_terraform_environment
+      - run:
+          name: terraform apply
+          command: |
+            source $BASH_ENV
+            cd ~/project/
+            terraform apply -input=false --auto-approve tfplan
+      - run:
+          name: terraform show
+          command: terraform show --no-color > tf_apply_result
+      - store_artifacts:
+          path: ~/project/tf_apply_result
+          destination: tf_apply_result
+
+  destroy:
+    <<: *default_config
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - *set_terraform_environment
+      - run:
+          name: "Destruction of env"
+          command: |
+            source $BASH_ENV
+            cd ~/project/
+            terraform destroy --auto-approve
+      - run:
+          name: terraform show
+          command: terraform show --no-color > tf_destroy_result
+      - store_artifacts:
+          path: ~/project/tf_destroy_result
+          destination: tf_destroy_result
+
+########################## Workflow ##########################
+workflows:
+  version: 2.0
+  build_plan_approve_apply:
+    jobs:
+      - build
+      - plan:
+          requires:
+            - build
+
+      - apply:
+          requires:
+            - plan
+          filters:
+            branches:
+              only:
+                - master
+
+#      - hold:
+#          type: approval
+#      - destroy:
+#          requires:
+#            - hold
