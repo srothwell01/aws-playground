@@ -13,6 +13,7 @@ default_config: &default_config
   environment:
     BASH_ENV: /root/.bashrc
     TERRAFORM_ENV: ~/project/
+    TF_INPUT: 0
 
 ########################## Pre-configure steps ##########################
 
