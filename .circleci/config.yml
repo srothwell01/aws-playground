@@ -124,7 +124,7 @@ workflows:
           requires:
             - plan
           filters:
-            branch:
+            branches:
               only:
                 - master
 
