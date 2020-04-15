@@ -10,7 +10,7 @@ resource "aws_alb" "playground_alb_load_balancer" {
   }
 }
 
-resource "aws_lb_target_group" "playground_app_target_group" {
+resource "aws_alb_target_group" "playground_app_target_group" {
   name        = "playground-app-target-group"
   port        = 8080
   protocol    = "HTTP"
@@ -32,7 +32,7 @@ resource "aws_lb_target_group" "playground_app_target_group" {
   }
 }
 
-resource "aws_lb_listener" "alb-listener" {
+resource "aws_alb_listener" "alb-listener" {
   load_balancer_arn = aws_alb.playground_alb_load_balancer.arn
   port              = "443"
   protocol          = "HTTPS"
@@ -40,7 +40,7 @@ resource "aws_lb_listener" "alb-listener" {
   certificate_arn   = var.rothwell_dev_acm_cert_arn
 
   default_action {
-    target_group_arn = aws_lb_target_group.playground_app_target_group.arn
+    target_group_arn = aws_alb_target_group.playground_app_target_group.arn
     type             = "forward"
   }
 }
