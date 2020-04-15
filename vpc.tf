@@ -39,7 +39,6 @@ resource "aws_subnet" "playground_public_sn_02" {
   }
 }
 
-
 # Routing table for public subnet 1
 resource "aws_route_table" "playground_public_sn_rt_01" {
   vpc_id = aws_vpc.playground_vpc.id
