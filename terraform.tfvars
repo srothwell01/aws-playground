@@ -11,7 +11,7 @@ playground_public_02_cidr = "10.0.10.0/24"
 # ecs config
 max_instance_size = 3
 min_instance_size = 1
-desired_capacity = 2
+desired_capacity  = 2
 
-ecs_cluster="playground_cluster"
-ecs_key_pair_name="playground_key_pair"
+ecs_cluster       = "playground_cluster"
+ecs_key_pair_name = "playground_key_pair"
