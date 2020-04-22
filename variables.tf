@@ -1,3 +1,4 @@
+### VPC and networking ###
 variable "region" {
   description = "AWS region"
   type        = string
@@ -23,7 +24,7 @@ variable "rothwell_dev_acm_cert_arn" {
   description = "ACM certificate arn for rothwell.dev for ELB"
 }
 
-### ECS and app stuff ###
+### ECS and app ###
 
 variable "ecs_cluster" {
   description = "ECS cluster name"
