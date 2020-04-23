@@ -33,6 +33,10 @@ output "playground-app-target-group-arn" {
 output "ecs-service-role-arn" {
   value = aws_iam_role.ecs-service-role.arn
 }
+
+output "ecs-task-execution-role-arn" {
+  value = aws_iam_role.playground-task-execution-role.arn
+}
 #
 #output "ecs-instance-role-name" {
 #  value = aws_iam_role.ecs-instance-role.name

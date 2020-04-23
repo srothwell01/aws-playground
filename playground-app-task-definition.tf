@@ -4,10 +4,11 @@ data "aws_ecs_task_definition" "playground_app" {
 }
 
 resource "aws_ecs_task_definition" "playground_app" {
-  family                = "playground_app"
-  network_mode          = "awsvpc"
+  family                   = "playground_app"
+  network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  container_definitions = <<DEFINITION
+  execution_role_arn       = aws_iam_role.playground-task-execution-role.arn
+  container_definitions    = <<DEFINITION
   [
     {
       "name": "playground_app",
