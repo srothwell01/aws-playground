@@ -3,7 +3,6 @@ resource "aws_alb" "playground_alb_load_balancer" {
   name            = "playground-ecs-alb-load-balancer"
   security_groups = [aws_security_group.playground_public_sg.id]
   subnets         = [aws_subnet.playground_public_sn_01.id, aws_subnet.playground_public_sn_02.id]
-
   tags = {
     Name        = "playground-alb-load-balancer"
     Description = "Load balancer to support the ECS cluster"
@@ -12,11 +11,11 @@ resource "aws_alb" "playground_alb_load_balancer" {
 
 resource "aws_alb_target_group" "playground_app_target_group" {
   name        = "playground-app-target-group"
-  port        = 8080
+  port        = 80
   protocol    = "HTTP"
   vpc_id      = aws_vpc.playground_vpc.id
   target_type = "ip"
-
+  depends_on  = [aws_alb.playground_alb_load_balancer]
   health_check {
     healthy_threshold   = "5"
     unhealthy_threshold = "2"

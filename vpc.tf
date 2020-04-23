@@ -75,7 +75,6 @@ resource "aws_route_table_association" "playground_public_sn_rt_assn_02" {
   route_table_id = aws_route_table.playground_public_sn_rt_02.id
 }
 
-
 # ECS Instance Security group
 resource "aws_security_group" "playground_public_sg" {
   name        = "playground_public_sg"
@@ -83,37 +82,32 @@ resource "aws_security_group" "playground_public_sg" {
   vpc_id      = aws_vpc.playground_vpc.id
 
   ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-    cidr_blocks = [
-    "0.0.0.0/0"]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
-    from_port = 80
-    to_port   = 80
-    protocol  = "tcp"
-    cidr_blocks = [
-    "0.0.0.0/0"]
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
-    cidr_blocks = [
-      var.playground_public_01_cidr,
-    var.playground_public_02_cidr]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [var.playground_public_01_cidr, var.playground_public_02_cidr]
   }
 
   egress {
     # allow all traffic to private SN
-    from_port = "0"
-    to_port   = "0"
-    protocol  = "-1"
-    cidr_blocks = [
-    "0.0.0.0/0"]
+    from_port   = "0"
+    to_port     = "0"
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
