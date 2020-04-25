@@ -20,9 +20,9 @@ variable "playground_public_02_cidr" {
   description = "Public CIDR for externally accessible subnet"
 }
 
-variable "rothwell_dev_acm_cert_arn" {
-  description = "ACM certificate arn for rothwell.dev for ELB"
-}
+#variable "rothwell_dev_acm_cert_arn" {
+#  description = "ACM certificate arn for rothwell.dev for ELB"
+#}
 
 ### ECS and app ###
 
