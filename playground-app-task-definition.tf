@@ -8,6 +8,8 @@ resource "aws_ecs_task_definition" "playground_app" {
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = aws_iam_role.playground-task-execution-role.arn
+  cpu                      = 256
+  memory                   = 1024
   container_definitions    = <<DEFINITION
   [
     {

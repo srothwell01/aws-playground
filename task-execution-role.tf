@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "task-execution-policy" {
 
     principals {
       type        = "Service"
-      identifiers = ["ecs.amazonaws.com"]
+      identifiers = ["ecs-tasks.amazonaws.com"]
     }
   }
 }
