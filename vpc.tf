@@ -75,7 +75,7 @@ resource "aws_route_table_association" "playground_public_sn_rt_assn_02" {
   route_table_id = aws_route_table.playground_public_sn_rt_02.id
 }
 
-# ECS Instance Security group
+# ELB Security group
 resource "aws_security_group" "playground_public_sg" {
   name        = "playground_public_sg"
   description = "Test public access security group"
@@ -91,6 +91,13 @@ resource "aws_security_group" "playground_public_sg" {
   ingress {
     from_port   = 80
     to_port     = 80
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -103,7 +110,6 @@ resource "aws_security_group" "playground_public_sg" {
   }
 
   egress {
-    # allow all traffic to private SN
     from_port   = "0"
     to_port     = "0"
     protocol    = "-1"
@@ -112,5 +118,37 @@ resource "aws_security_group" "playground_public_sg" {
 
   tags = {
     Name = "playground_public_sg"
+  }
+}
+
+# ECS Instance Security group
+resource "aws_security_group" "playground_private_ecs_sg" {
+  name        = "playground_private_ecs_sg"
+  description = "private access security group for ECS"
+  vpc_id      = aws_vpc.playground_vpc.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [var.playground_public_01_cidr, var.playground_public_02_cidr]
+  }
+
+  egress {
+    from_port   = "0"
+    to_port     = "0"
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "playground_private_ecs_sg"
   }
 }
