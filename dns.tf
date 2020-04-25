@@ -3,10 +3,11 @@ resource "aws_route53_zone" "rothwell-dev-zone" {
 }
 
 resource "aws_route53_record" "rothwell-dev-ns" {
-  zone_id = aws_route53_zone.rothwell-dev-zone.zone_id
-  name    = "rothwell.dev"
-  type    = "NS"
-  ttl     = 172800
+  allow_overwrite = true
+  zone_id         = aws_route53_zone.rothwell-dev-zone.zone_id
+  name            = "rothwell.dev"
+  type            = "NS"
+  ttl             = 172800
 
   records = [
     "ns-1389.awsdns-45.org.",
