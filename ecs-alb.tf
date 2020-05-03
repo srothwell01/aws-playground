@@ -36,7 +36,7 @@ resource "aws_alb_listener" "alb-listener-https" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = var.rothwell_dev_acm_cert_arn
+  certificate_arn   = aws_acm_certificate_validation.rothwell-dev-wildcard-cert-validation.certificate_arn
 
   default_action {
     target_group_arn = aws_alb_target_group.playground_app_target_group.arn
