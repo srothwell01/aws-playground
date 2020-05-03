@@ -17,4 +17,7 @@ resource "aws_route53_record" "cert_validation-record" {
 resource "aws_acm_certificate_validation" "rothwell-dev-wildcard-cert-validation" {
   certificate_arn         = aws_acm_certificate.rothwell-dev-wildcard-cert.arn
   validation_record_fqdns = [aws_route53_record.cert_validation-record.fqdn]
+  tags = {
+    name = "rothwell.dev wildcard certificate"
+  }
 }
