@@ -4,23 +4,17 @@ resource "aws_acm_certificate" "rothwell-dev-wildcard-cert" {
   validation_method         = "DNS"
 }
 
-resource "aws_route53_record" "cert_validation" {
+resource "aws_route53_record" "cert_validation-record" {
   name    = aws_acm_certificate.rothwell-dev-wildcard-cert.domain_validation_options.0.resource_record_name
   type    = aws_acm_certificate.rothwell-dev-wildcard-cert.domain_validation_options.0.resource_record_type
-  zone_id = aws_route53_zone.rothwell-dev-zone.zone_id
+  zone_id = "Z05992453GOAXPKF78Y68"
   records = [aws_acm_certificate.rothwell-dev-wildcard-cert.domain_validation_options.0.resource_record_value]
   ttl     = 60
 }
 
-resource "aws_route53_record" "cert_validation_alt1" {
-  name    = aws_acm_certificate.rothwell-dev-wildcard-cert.domain_validation_options.1.resource_record_name
-  type    = aws_acm_certificate.rothwell-dev-wildcard-cert.domain_validation_options.1.resource_record_type
-  zone_id = aws_route53_zone.rothwell-dev-zone.zone_id
-  records = [aws_acm_certificate.rothwell-dev-wildcard-cert.domain_validation_options.1.resource_record_value]
-  ttl     = 60
-}
+
 
 resource "aws_acm_certificate_validation" "rothwell-dev-wildcard-cert-validation" {
   certificate_arn         = aws_acm_certificate.rothwell-dev-wildcard-cert.arn
-  validation_record_fqdns = [aws_route53_record.cert_validation.fqdn, aws_route53_record.cert_validation_alt1.fqdn]
+  validation_record_fqdns = [aws_route53_record.cert_validation-record.fqdn]
 }
