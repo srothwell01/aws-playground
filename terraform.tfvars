@@ -4,8 +4,9 @@ region = "eu-west-2"
 playground_vpc          = "playground_vpc"
 playground_network_cidr = "10.0.0.0/16"
 
-playground_public_01_cidr = "10.0.0.0/24"
-playground_public_02_cidr = "10.0.10.0/24"
+playground_public_01_cidr  = "10.0.0.0/24"
+playground_public_02_cidr  = "10.0.10.0/24"
+playground_private_01_cidr = "10.0.20.0/24"
 
 
 # ecs config
