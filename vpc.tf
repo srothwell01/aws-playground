@@ -19,7 +19,22 @@ resource "aws_internet_gateway" "playground_ig" {
   }
 }
 
-## Public subnet 1
+# Elastic IP for the NAT gateway
+resource "aws_eip" "playground_nat_gw_eip" {
+  vpc        = true
+  depends_on = [aws_internet_gateway.playground_ig]
+}
+
+# NAT gateway for private subnet
+# Gateway must be created in a public subnet
+resource "aws_nat_gateway" "playground_nat_gw" {
+  allocation_id = aws_eip.playground_nat_gw_eip.id
+  subnet_id     = aws_subnet.playground_public_sn_01.id
+
+  depends_on = [aws_internet_gateway.playground_ig]
+}
+
+# Public subnet 1
 resource "aws_subnet" "playground_public_sn_01" {
   vpc_id            = aws_vpc.playground_vpc.id
   cidr_block        = var.playground_public_01_cidr
@@ -36,6 +51,16 @@ resource "aws_subnet" "playground_public_sn_02" {
   availability_zone = data.aws_availability_zones.available.names[1]
   tags = {
     Name = "playground_public_sn_02"
+  }
+}
+
+# Private subnet 1
+resource "aws_subnet" "playground_private_sn_01" {
+  vpc_id            = aws_vpc.playground_vpc.id
+  cidr_block        = var.playground_private_01_cidr
+  availability_zone = data.aws_availability_zones.available.names[1]
+  tags = {
+    Name = "playground_private_sn_01"
   }
 }
 
@@ -69,16 +94,34 @@ resource "aws_route_table" "playground_public_sn_rt_02" {
   }
 }
 
-# Associate the routing table to public subnet 2
-resource "aws_route_table_association" "playground_public_sn_rt_assn_02" {
+# Associate the routing table to public subnet 1
+resource "aws_route_table_association" "playground_public_sn_rt_02_assn" {
   subnet_id      = aws_subnet.playground_public_sn_02.id
   route_table_id = aws_route_table.playground_public_sn_rt_02.id
 }
 
-# ELB Security group
+# Routing table for private subnet 1
+resource "aws_route_table" "playground_private_sn_rt_01" {
+  vpc_id = aws_vpc.playground_vpc.id
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.playground_nat_gw.id
+  }
+  tags = {
+    Name = "playground_private_sn_rt_01"
+  }
+}
+
+# Associate the routing table to private subnet 1
+resource "aws_route_table_association" "playground_private_sn_rt_assn_01" {
+  subnet_id      = aws_subnet.playground_private_sn_01.id
+  route_table_id = aws_route_table.playground_private_sn_rt_01.id
+}
+
+# ELB public security group
 resource "aws_security_group" "playground_public_sg" {
   name        = "playground_public_sg"
-  description = "Test public access security group"
+  description = "Public access security group"
   vpc_id      = aws_vpc.playground_vpc.id
 
   ingress {
@@ -106,7 +149,7 @@ resource "aws_security_group" "playground_public_sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [var.playground_public_01_cidr, var.playground_public_02_cidr]
+    cidr_blocks = [var.playground_public_01_cidr, var.playground_public_02_cidr, var.playground_private_01_cidr]
   }
 
   egress {
@@ -131,14 +174,7 @@ resource "aws_security_group" "playground_private_ecs_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "udp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = [var.playground_public_01_cidr, var.playground_public_02_cidr]
+    cidr_blocks = [var.playground_public_01_cidr, var.playground_public_02_cidr, var.playground_private_01_cidr]
   }
 
   egress {

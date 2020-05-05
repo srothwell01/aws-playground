@@ -16,7 +16,6 @@ resource "aws_ecs_service" "playground_app_service" {
   }
   network_configuration {
     security_groups  = [aws_security_group.playground_private_ecs_sg.id]
-    subnets          = [aws_subnet.playground_public_sn_01.id, aws_subnet.playground_public_sn_02.id]
-    assign_public_ip = true
+    subnets          = [aws_subnet.playground_private_sn_01.id]
   }
 }
