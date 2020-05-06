@@ -188,3 +188,47 @@ resource "aws_security_group" "playground_private_ecs_sg" {
     Name = "playground_private_ecs_sg"
   }
 }
+
+# NACLs
+resource "aws_network_acl" "playground_public_nacl" {
+  vpc_id = aws_vpc.playground_vpc.id
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 80
+    to_port    = 80
+  }
+  
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 105
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 443
+    to_port    = 443
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 200
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 80
+    to_port    = 80
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 205
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 443
+    to_port    = 443
+  }
+  tags = {
+    Name = "main"
+  }
+}
