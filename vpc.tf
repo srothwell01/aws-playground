@@ -173,7 +173,7 @@ resource "aws_security_group" "playground_private_ecs_sg" {
   ingress {
     from_port   = 80
     to_port     = 80
-    protocol    = "udp"
+    protocol    = "tcp"
     cidr_blocks = [var.playground_public_01_cidr, var.playground_public_02_cidr, var.playground_private_01_cidr]
   }
 
