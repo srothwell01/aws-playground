@@ -15,7 +15,7 @@ resource "aws_ecs_service" "playground_app_service" {
     container_name   = "playground_app"
   }
   network_configuration {
-    security_groups  = [aws_security_group.playground_private_ecs_sg.id]
-    subnets          = [aws_subnet.playground_private_sn_01.id]
+    security_groups = [aws_security_group.playground_private_ecs_sg.id]
+    subnets         = [aws_subnet.playground_private_sn_01.id]
   }
 }
